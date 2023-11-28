@@ -1,58 +1,29 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-
+#include<bits/stdc++.h>
 using namespace std;
 
-class ExpressionFinder {
+class Solution {
 public:
-    ExpressionFinder(int n, long long target_sum, const vector<long long>& sequence)
-        : n(n), target_sum(target_sum), sequence(sequence) {}
-
-    // Function to find the expression
-    string findExpression() {
-        for (int i = 0; i < (1 << (n - 1)); ++i) {
-            long long current_sum = sequence[0];
-            string expression = to_string(sequence[0]);
-
-            for (int j = 0; j < n - 1; ++j) {
-                if (i & (1 << j)) {
-                    current_sum += 2 * sequence[j + 1];
-                    expression += '.';
+    int minCost(string s) {
+        int n = s.size();
+        vector<vector<int> > dp(n, vector<int>(n));
+        for (int len = 2; len <= n; len++) {
+            for (int i = 0; i <= n - len; i++) {
+                int j = i + len - 1;
+                if (s[i] == s[j]) {
+                    dp[i][j] = dp[i + 1][j - 1];
                 } else {
-                    current_sum += sequence[j + 1];
-                    expression += '+';
+                    dp[i][j] = min(dp[i + 1][j], dp[i][j - 1]) + 1;
                 }
-                expression += to_string(sequence[j + 1]);
-            }
-
-            if (current_sum == target_sum) {
-                return expression;
             }
         }
-
-        return "Impossible";
+        return dp[0][n-1];
     }
-
-private:
-    int n;
-    long long target_sum;
-    vector<long long> sequence;
 };
 
 int main() {
-    int N;
-    long long S;
-    cin >> N >> S;
-
-    vector<long long> sequence(N);
-    for (int i = 0; i < N; ++i) {
-        cin >> sequence[i];
-    }
-
-    ExpressionFinder expressionFinder(N, S, sequence);
-    string result = expressionFinder.findExpression();
-    cout << result << endl;
-
+    Solution solution;
+    string s;
+    cin >> s;
+    cout << solution.minCost(s) << endl;
     return 0;
 }
